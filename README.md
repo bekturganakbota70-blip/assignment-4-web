@@ -1,21 +1,21 @@
 Product Management System
- PROJECT DESCRIPTION
+  PROJECT DESCRIPTION
 
-This project is a full-stack Product Management system built with:
+    This project is a full-stack Product Management system built with:
 
-Node.js
+         Node.js
 
-Express.js
+         Express.js
 
-MongoDB Atlas
+         MongoDB Atlas
 
-JWT Authentication
+         JWT Authentication
 
-Role-Based Access Control (RBAC)
+         Role-Based Access Control (RBAC)
 
-HTML + JavaScript Frontend
+          HTML + JavaScript Frontend
 
-Deployed on Render
+          Deployed on Render
 
 The application allows users to register, log in, and view products.
 Only users with the admin role can create, update, and delete products and categories.
