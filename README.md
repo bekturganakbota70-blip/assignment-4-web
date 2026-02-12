@@ -92,11 +92,18 @@ Database
       categories
 
 Final Project Goals Achieved
+
       Full CRUD operations
+      
       MVC architecture
+      
       Secure authentication
+      
       Role-based authorization
+      
       Full-stack integration
+      
       Cloud deployment
+      
       Production-ready structure
 
