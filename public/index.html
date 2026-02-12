@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Product App</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f4f6f8;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+input, button {
+  padding: 8px;
+  margin: 5px;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.product {
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>Product Management</h1>
+
+<!-- Register -->
+<div class="card">
+<h3>Register</h3>
+<input id="regEmail" placeholder="Email">
+<input id="regPassword" type="password" placeholder="Password">
+<select id="regRole">
+  <option value="user">User</option>
+  <option value="admin">Admin</option>
+</select>
+<button onclick="register()">Register</button>
+</div>
+
+<!-- Login -->
+<div class="card">
+<h3>Login</h3>
+<input id="loginEmail" placeholder="Email">
+<input id="loginPassword" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="status"></p>
+</div>
+
+<!-- Add Product -->
+<div class="card">
+<h3>Add Product (Admin)</h3>
+<input id="pName" placeholder="Name">
+<input id="pPrice" type="number" placeholder="Price">
+<input id="pDesc" placeholder="Description">
+<input id="pCategory" placeholder="Category ID">
+<button onclick="addProduct()">Add</button>
+</div>
+
+<!-- Products -->
+<div class="card">
+<h3>Products</h3>
+<div id="products"></div>
+<button onclick="loadProducts()">Refresh</button>
+</div>
+
+</div>
+
+<script>
+const API = "http://localhost:3000/api";
+
+function getToken() {
+  return localStorage.getItem("token");
+}
+
+// REGISTER
+async function register() {
+  const res = await fetch(API + "/auth/register", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      email: regEmail.value,
+      password: regPassword.value,
+      role: regRole.value
+    })
+  });
+
+  alert("User registered");
+}
+
+// LOGIN
+async function login() {
+  const res = await fetch(API + "/auth/login", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      email: loginEmail.value,
+      password: loginPassword.value
+    })
+  });
+
+  const data = await res.json();
+
+  if (data.token) {
+    localStorage.setItem("token", data.token);
+    status.innerText = "Logged in";
+  } else {
+    status.innerText = "Login failed";
+  }
+}
+
+// LOAD PRODUCTS
+async function loadProducts() {
+  const res = await fetch(API + "/products");
+  const data = await res.json();
+
+  products.innerHTML = "";
+
+  data.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `
+      <b>${p.name}</b> - $${p.price} <br>
+      ${p.description}
+    `;
+    products.appendChild(div);
+  });
+}
+
+// ADD PRODUCT (admin)
+async function addProduct() {
+  const res = await fetch(API + "/products", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + getToken()
+    },
+    body: JSON.stringify({
+      name: pName.value,
+      price: pPrice.value,
+      description: pDesc.value,
+      category: pCategory.value
+    })
+  });
+
+  if (res.status === 201) {
+    alert("Product added");
+    loadProducts();
+  } else {
+    alert("Only admin can add product");
+  }
+}
+
+loadProducts();
+</script>
+
+</body>
+</html>
